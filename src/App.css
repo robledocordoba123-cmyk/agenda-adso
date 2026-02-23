@@ -1,0 +1,17 @@
+.app-container { max-width: 520px; margin: 2rem auto; padding: 20px; font-family: "Segoe UI", Arial, sans-serif; }
+.app-title { text-align: center; color: #5b21b6; font-size: 1.8rem; margin-bottom: 4px; }
+.subtitulo { text-align: center; font-size: 14px; color: #555; margin-top: 0; margin-bottom: 16px; }
+.form-contacto { background: #fff; padding: 1rem; border: 1px solid #d1d5db; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.2rem; }
+.form-contacto label { font-size: 0.85rem; font-weight: 500; color: #374151; }
+.form-contacto input { padding: 0.65rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
+.form-contacto button { background: #7c3aed; color: #fff; padding: 0.7rem; border: 0; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; }
+.form-contacto button:hover { background: #5b21b6; }
+.tarjeta-contacto { background: #fff; border: 1px solid #d1d5db; border-radius: 10px; padding: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,.08); display: flex; flex-direction: column; gap: 4px; margin-bottom: 0.7rem; }
+.tarjeta-contacto h3 { margin: 0; color: #5b21b6; font-weight: 600; }
+.tarjeta-contacto .dato { margin: 0; color: #333; font-size: 0.9rem; }
+.tarjeta-contacto .tag { margin: 0; color: #555; font-size: 0.85rem; }
+.acciones { display: flex; justify-content: flex-end; margin-top: 8px; }
+.btn-eliminar { background: #dc2626; color: #fff; padding: 0.45rem 0.75rem; border: 0; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+.btn-eliminar:hover { background: #b91c1c; }
+.app-nota { font-size: 12px; text-align: center; margin-top: 30px; color: #9ca3af; }
+.lista-contactos { margin-top: 8px; }
