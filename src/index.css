@@ -1,4 +1,7 @@
-* { box-sizing: border-box; }
-body { background: #f8fafc; font-family: "Segoe UI", Arial, sans-serif; margin: 0; padding: 0; color: #222; }
-#root { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-button { transition: background 0.2s; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-gray-800 font-sans;
+}

@@ -1,61 +1,66 @@
 import { useState, useEffect } from "react";
-import "./App.css";
-import ProfileForm from "./components/ProfileForm";
-import ProfilePreview from "./components/ProfilePreview";
-
-const INICIAL = {
-  nombre: "Tu nombre",
-  rol: "Aprendiz ADSO - SENA",
-  descripcion: "Estudiando desarrollo de software en el SENA.",
-  imagen: "",
-  colorPrimario: "#7c3aed",
-  colorSecundario: "#5b21b6",
-  redes: [
-    { nombre: "LinkedIn", activo: true },
-    { nombre: "GitHub", activo: true },
-    { nombre: "Instagram", activo: false },
-    { nombre: "Twitter", activo: false },
-    { nombre: "TikTok", activo: false },
-  ],
-};
+import FormularioContacto from "./components/FormularioContacto";
+import ContactoCard from "./components/ContactoCard";
 
 export default function App() {
-  const [perfil, setPerfil] = useState(
-    JSON.parse(localStorage.getItem("perfil-digital")) || INICIAL
-  );
+  const [contactos, setContactos] = useState(() => {
+    const guardado = localStorage.getItem("contactos-agenda");
+    return guardado ? JSON.parse(guardado) : [];
+  });
 
+  // guarda automáticamente cada vez que cambia la lista
   useEffect(() => {
-    localStorage.setItem("perfil-digital", JSON.stringify(perfil));
-  }, [perfil]);
+    localStorage.setItem("contactos-agenda", JSON.stringify(contactos));
+  }, [contactos]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setPerfil((prev) => ({ ...prev, [name]: value }));
+  const agregarContacto = (nuevoContacto) => {
+    setContactos((prev) => [
+      ...prev,
+      { ...nuevoContacto, id: Date.now() },
+    ]);
   };
 
-  const toggleRed = (nombre) => {
-    setPerfil((prev) => ({
-      ...prev,
-      redes: prev.redes.map((r) =>
-        r.nombre === nombre ? { ...r, activo: !r.activo } : r
-      ),
-    }));
+  const eliminarContacto = (id) => {
+    setContactos((prev) => prev.filter((c) => c.id !== id));
   };
 
   return (
-    <div className="taller-container">
-      <header className="taller-header">
-        <h1>🪪 Creador de Perfil Digital</h1>
-        <p>Taller Clase 6 – Agenda ADSO | Ficha 3229207</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* HEADER */}
+      <header className="text-center py-6">
+        <h1 className="text-3xl font-bold text-purple-700">
+          📒 Agenda ADSO v4
+        </h1>
+        <p className="bg-purple-600 text-white text-xs rounded px-2 py-1 w-fit mx-auto mt-2">
+          ADSO
+        </p>
+        <p className="text-gray-500 text-sm mt-2">
+          Taller Clase 6 - Agenda ADSO | Ficha 3229209
+        </p>
       </header>
-      <div className="taller-layout">
-        <ProfileForm perfil={perfil} onChange={handleChange} onToggleRed={toggleRed} />
-        <div className="preview-columna">
-          <h2 className="preview-titulo">👁️ Vista previa en tiempo real</h2>
-          <ProfilePreview perfil={perfil} />
-          <p className="preview-nota">Los cambios se guardan automáticamente 💾</p>
-        </div>
-      </div>
+
+      {/* MAIN */}
+      <main className="max-w-2xl mx-auto px-4 pb-10">
+        <FormularioContacto onAgregar={agregarContacto} />
+
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">
+          📋 Contactos guardados ({contactos.length})
+        </h2>
+
+        {contactos.length === 0 && (
+          <p className="text-gray-400 text-center text-sm mt-6">
+            No hay contactos aún. ¡Agrega el primero!
+          </p>
+        )}
+
+        {contactos.map((c) => (
+          <ContactoCard
+            key={c.id}
+            {...c}
+            onDelete={eliminarContacto}
+          />
+        ))}
+      </main>
     </div>
   );
 }
