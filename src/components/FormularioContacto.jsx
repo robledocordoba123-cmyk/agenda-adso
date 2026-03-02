@@ -2,72 +2,43 @@ import { useState } from "react";
 
 export default function FormularioContacto({ onAgregar }) {
   const [form, setForm] = useState({
-    nombre: "",
-    telefono: "",
-    correo: "",
-    etiqueta: "",
+    nombre: "", telefono: "", correo: "", etiqueta: "",
   });
 
   const onChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (!form.nombre.trim() || !form.telefono.trim()) {
-      alert("Completa al menos Nombre y Teléfono");
-      return;
-    }
+    if (!form.nombre || !form.telefono || !form.correo) return;
     onAgregar(form);
     setForm({ nombre: "", telefono: "", correo: "", etiqueta: "" });
   };
 
+  const inputClass = "w-full bg-blue-50 border-2 border-blue-100 text-gray-800 placeholder-gray-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition";
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="bg-white shadow-md rounded-lg p-5 flex flex-col gap-4 mb-6"
-    >
-      <label className="text-sm font-semibold">Nombre *</label>
-      <input
-        name="nombre"
-        value={form.nombre}
-        onChange={onChange}
-        placeholder="Ej: Ana López"
-        className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
-      />
-
-      <label className="text-sm font-semibold">Teléfono *</label>
-      <input
-        name="telefono"
-        value={form.telefono}
-        onChange={onChange}
-        placeholder="Ej: 300 123 4567"
-        className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
-      />
-
-      <label className="text-sm font-semibold">Correo</label>
-      <input
-        name="correo"
-        value={form.correo}
-        onChange={onChange}
-        placeholder="Ej: ana@sena.edu.co"
-        className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
-      />
-
-      <label className="text-sm font-semibold">Etiqueta (opcional)</label>
-      <input
-        name="etiqueta"
-        value={form.etiqueta}
-        onChange={onChange}
-        placeholder="Ej: Compañera, Instructor..."
-        className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
-      />
-
-      <button
-        type="submit"
-        className="bg-purple-600 hover:bg-purple-800 text-white py-2 rounded-md font-semibold transition"
-      >
+    <form onSubmit={onSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">Nombre *</label>
+          <input className={inputClass} name="nombre" placeholder="Ej: Camila Pérez" value={form.nombre} onChange={onChange} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">Teléfono *</label>
+          <input className={inputClass} name="telefono" placeholder="Ej: 300 123 4567" value={form.telefono} onChange={onChange} />
+        </div>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-600 mb-1">Correo *</label>
+        <input className={inputClass} name="correo" placeholder="Ej: camila@sena.edu.co" value={form.correo} onChange={onChange} />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-600 mb-1">Etiqueta (opcional)</label>
+        <input className={inputClass} name="etiqueta" placeholder="Ej: Trabajo" value={form.etiqueta} onChange={onChange} />
+      </div>
+      <button type="submit" className="bg-gradient-to-r from-blue-600 to-cyan-400 hover:from-blue-700 hover:to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold shadow-md transition">
         Agregar contacto
       </button>
     </form>

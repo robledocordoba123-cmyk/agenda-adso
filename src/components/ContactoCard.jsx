@@ -1,31 +1,26 @@
-export default function ContactoCard({
-  id, nombre, telefono, correo, etiqueta, onDelete,
-}) {
+export default function ContactoCard({ nombre, telefono, correo, etiqueta, onEliminar }) {
   return (
-    <article className="bg-white border rounded-lg shadow-sm p-4 mb-4">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="text-lg font-semibold text-purple-800">
-            {nombre}
-          </h3>
-          {etiqueta && (
-            <span className="bg-purple-600 text-white text-xs rounded px-2 py-1">
-              {etiqueta}
-            </span>
-          )}
-          <p className="text-gray-600 text-sm mt-1">📞 {telefono}</p>
-          {correo && (
-            <p className="text-gray-600 text-sm">✉️ {correo}</p>
-          )}
-        </div>
-
-        <button
-          onClick={() => onDelete(id)}
-          className="bg-red-500 hover:bg-red-700 text-white text-sm px-3 py-1 rounded-md transition"
-        >
-          Eliminar
-        </button>
+    <div className="bg-white border-2 border-blue-100 rounded-2xl p-6 flex items-start justify-between hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-50 transition">
+      <div className="space-y-1">
+        <h3 className="text-xl font-bold text-blue-700">{nombre}</h3>
+        <p className="text-gray-500 text-sm flex items-center gap-2">
+          <span>📞</span> {telefono}
+        </p>
+        <p className="text-gray-500 text-sm flex items-center gap-2">
+          <span>✉️</span> {correo}
+        </p>
+        {etiqueta && (
+          <span className="inline-block bg-cyan-50 text-cyan-600 border border-cyan-300 text-xs px-3 py-1 rounded-full mt-2">
+            {etiqueta}
+          </span>
+        )}
       </div>
-    </article>
+      <button
+        onClick={onEliminar}
+        className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg shadow transition"
+      >
+        Eliminar
+      </button>
+    </div>
   );
 }
