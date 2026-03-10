@@ -13,6 +13,41 @@
       "telefono": "301566742",
       "correo": "ManuelaCordoba@gmail.com",
       "etiqueta": "Compañera"
+    },
+    {
+      "id": "dcd2",
+      "nombre": "Susana ",
+      "telefono": "3118836570",
+      "correo": "Robledosusana12@gmail.com",
+      "etiqueta": "Jefa"
+    },
+    {
+      "id": "a95d",
+      "nombre": "Carlos",
+      "telefono": "321422788",
+      "correo": "Cordoba123@gmail.com",
+      "etiqueta": "Compañera"
+    },
+    {
+      "id": "3975",
+      "nombre": "Ana",
+      "telefono": "3448117994",
+      "correo": "Anacordoba126@gmail.com",
+      "etiqueta": "Compañera"
+    },
+    {
+      "id": "6c1b",
+      "nombre": "Daniela",
+      "telefono": "3417895647",
+      "correo": "Dani1267@gmail.com",
+      "etiqueta": "Compañera"
+    },
+    {
+      "id": "f7e5",
+      "nombre": "Luis",
+      "telefono": "3226778991",
+      "correo": "luis@gmail.com",
+      "etiqueta": "Jefe"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
