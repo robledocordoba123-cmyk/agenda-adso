@@ -1,4 +1,5 @@
-export default function ContactoCard({ nombre, telefono, correo, etiqueta, onEliminar }) {
+// Archivo: src/components/ContactoCard.jsx
+export default function ContactoCard({ nombre, telefono, correo, etiqueta, onEliminar, onEditar }) {
   return (
     <div className="bg-white border-2 border-blue-100 rounded-2xl p-6 flex items-start justify-between hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-50 transition">
       <div className="space-y-1">
@@ -15,12 +16,22 @@ export default function ContactoCard({ nombre, telefono, correo, etiqueta, onEli
           </span>
         )}
       </div>
-      <button
-        onClick={onEliminar}
-        className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg shadow transition"
-      >
-        Eliminar
-      </button>
+
+      {/* NUEVO CLASE 11: botones Editar y Eliminar */}
+      <div className="flex gap-2">
+        <button
+          onClick={onEditar}
+          className="bg-blue-50 hover:bg-blue-100 text-blue-600 border-2 border-blue-200 text-sm px-4 py-2 rounded-lg transition"
+        >
+          Editar
+        </button>
+        <button
+          onClick={onEliminar}
+          className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg shadow transition"
+        >
+          Eliminar
+        </button>
+      </div>
     </div>
   );
 }

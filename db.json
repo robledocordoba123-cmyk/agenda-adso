@@ -22,18 +22,18 @@
       "etiqueta": "Jefa"
     },
     {
-      "id": "a95d",
-      "nombre": "Carlos",
+      "nombre": "Pablo",
       "telefono": "321422788",
       "correo": "Cordoba123@gmail.com",
-      "etiqueta": "Compañera"
+      "etiqueta": "Compañera",
+      "id": "a95d"
     },
     {
-      "id": "3975",
-      "nombre": "Ana",
+      "nombre": "Ana Marcela",
       "telefono": "3448117994",
       "correo": "Anacordoba126@gmail.com",
-      "etiqueta": "Compañera"
+      "etiqueta": "Compañera",
+      "id": "3975"
     },
     {
       "id": "6c1b",
