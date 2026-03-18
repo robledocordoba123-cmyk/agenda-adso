@@ -1,19 +1,36 @@
+// Archivo: src/pages/Login.jsx
+// Página de inicio de sesión de la Agenda ADSO.
+// Valida las credenciales del usuario y redirige al dashboard si son correctas.
+// IMPORTANTE: este login es pedagógico, no es seguro para producción.
+// En sistemas reales la validación ocurre en el backend con JWT y bcrypt.
+
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 
 export default function Login() {
+  // Estados locales para los campos del formulario
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
+  // Obtenemos la función login del contexto de autenticación
   const { login } = useAuth()
+
+  // useNavigate nos permite redirigir al usuario a otra ruta
   const navigate = useNavigate()
 
+  // handleSubmit se ejecuta cuando el usuario envía el formulario
   const handleSubmit = (e) => {
+    // Evitamos que la página se recargue al enviar el formulario
     e.preventDefault()
+
+    // Validamos las credenciales con valores fijos (solo para aprendizaje)
     if (email === "admin@sena.com" && password === "1234") {
+      // Si son correctas: guardamos la sesión y vamos al dashboard
       login()
       navigate("/")
     } else {
+      // Si son incorrectas: mostramos una alerta al usuario
       alert("Credenciales incorrectas")
     }
   }
@@ -22,7 +39,7 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 flex items-center justify-center">
       <div className="bg-white rounded-3xl shadow-2xl px-8 py-10 w-full max-w-md">
 
-        {/* Logo igual al dashboard */}
+        {/* Logo igual al dashboard para mantener consistencia visual */}
         <div className="flex items-center gap-3 mb-6">
           <div className="h-10 w-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
             A
@@ -36,6 +53,7 @@ export default function Login() {
         <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Iniciar sesión</h1>
         <p className="text-sm text-gray-500 mb-6">Ingresa tus credenciales para continuar</p>
 
+        {/* Formulario controlado: cada campo está vinculado a su estado */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -58,7 +76,7 @@ export default function Login() {
             Iniciar sesión
           </button>
 
-          {/* Credenciales de prueba */}
+          {/* Credenciales de prueba visibles para facilitar las pruebas */}
           <div className="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-center">
             <p className="text-xs text-slate-400 font-medium uppercase tracking-widest mb-1">Credenciales de prueba</p>
             <p className="text-xs text-slate-600">📧 admin@sena.com</p>

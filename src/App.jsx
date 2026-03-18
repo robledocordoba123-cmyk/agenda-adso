@@ -1,5 +1,8 @@
 // Archivo: src/App.jsx
-// Versión con autenticación básica - Clase 13
+// Clase 13 - Login y rutas protegidas en React
+// Este archivo define las rutas de la aplicación y el componente Dashboard.
+// La ruta /login es pública y la ruta / está protegida con ProtectedRoute.
+
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import {
@@ -15,17 +18,27 @@ import ContactoCard from "./components/ContactoCard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 
-// Dashboard principal de la Agenda ADSO
+// Dashboard: componente principal que solo ven los usuarios autenticados
 function Dashboard() {
+  // Obtenemos la función logout del contexto para cerrar sesión
   const { logout } = useAuth();
+
+  // Estado con todos los contactos obtenidos desde la API remota en Render
   const [contactos, setContactos] = useState([]);
+  // Estado de carga mientras se consulta la API
   const [cargando, setCargando] = useState(true);
+  // Estado para mostrar mensajes de error globales
   const [error, setError] = useState("");
+  // Estado del término de búsqueda
   const [busqueda, setBusqueda] = useState("");
+  // Estado del orden de la lista: true = A-Z, false = Z-A
   const [ordenAsc, setOrdenAsc] = useState(true);
+  // Estado del contacto que se está editando
   const [contactoEnEdicion, setContactoEnEdicion] = useState(null);
+  // Estado de la vista actual: "crear" o "contactos"
   const [vista, setVista] = useState("crear");
 
+  // Cargamos los contactos al iniciar el Dashboard
   useEffect(() => {
     async function cargarContactos() {
       try {
@@ -43,6 +56,7 @@ function Dashboard() {
     cargarContactos();
   }, []);
 
+  // Crear contacto: llama a la API y agrega el nuevo contacto al estado
   const agregarContacto = async (nuevo) => {
     try {
       setError("");
@@ -55,6 +69,7 @@ function Dashboard() {
     }
   };
 
+  // Actualizar contacto: llama a la API y reemplaza el contacto en el estado
   const actualizarContactoHandler = async (contactoActualizado) => {
     try {
       setError("");
@@ -68,6 +83,7 @@ function Dashboard() {
     }
   };
 
+  // Eliminar contacto: llama a la API y lo quita del estado local
   const eliminarContacto = async (id) => {
     try {
       setError("");
@@ -80,26 +96,31 @@ function Dashboard() {
     }
   };
 
+  // Activa el modo edición con el contacto seleccionado
   const onEditarClick = (contacto) => {
     setContactoEnEdicion(contacto);
     setError("");
   };
 
+  // Cancela la edición y vuelve al modo normal
   const onCancelarEdicion = () => {
     setContactoEnEdicion(null);
   };
 
+  // Cambia a la vista de ver contactos
   const irAVerContactos = () => {
     setVista("contactos");
     setContactoEnEdicion(null);
   };
 
+  // Vuelve a la vista de crear contacto
   const irACrearContacto = () => {
     setVista("crear");
     setContactoEnEdicion(null);
     setBusqueda("");
   };
 
+  // Filtramos los contactos según el término de búsqueda
   const contactosFiltrados = contactos.filter((c) => {
     const termino = busqueda.toLowerCase();
     return (
@@ -110,6 +131,7 @@ function Dashboard() {
     );
   });
 
+  // Ordenamos los contactos filtrados por nombre A-Z o Z-A
   const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
     const nombreA = a.nombre.toLowerCase();
     const nombreB = b.nombre.toLowerCase();
@@ -124,7 +146,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
 
-      {/* Barra superior */}
+      {/* Barra superior con botón de cerrar sesión */}
       <header className="border-b border-slate-800 bg-slate-950/60 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -143,7 +165,7 @@ function Dashboard() {
               <p className="text-[10px] uppercase tracking-[0.25em] text-slate-400">SENA CTMA</p>
               <p className="text-xs text-slate-200">Ficha {APP_INFO.ficha}</p>
             </div>
-            {/* Botón de cerrar sesión */}
+            {/* Al hacer clic en este botón se ejecuta logout() del contexto */}
             <button
               onClick={logout}
               className="text-xs px-3 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition"
@@ -156,7 +178,6 @@ function Dashboard() {
 
       <main className="max-w-6xl mx-auto px-4 py-8 pb-14">
         <div className="grid gap-8 md:grid-cols-[1.6fr,1fr] items-start">
-
           <div className="bg-white/95 rounded-3xl shadow-2xl border border-slate-100 px-6 py-7 md:px-8 md:py-8">
             <header className="mb-5 flex items-start justify-between gap-3">
               <div>
@@ -315,10 +336,14 @@ function Dashboard() {
   );
 }
 
+// App: define las rutas públicas y protegidas de la aplicación
 export default function App() {
   return (
     <Routes>
+      {/* Ruta pública: cualquiera puede ver el login */}
       <Route path="/login" element={<Login />} />
+
+      {/* Ruta protegida: solo usuarios autenticados pueden ver el Dashboard */}
       <Route path="/" element={
         <ProtectedRoute>
           <Dashboard />
