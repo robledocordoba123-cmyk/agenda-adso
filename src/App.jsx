@@ -1,9 +1,7 @@
 // Archivo: src/App.jsx
-// Versión PRO de la Agenda ADSO con dos vistas:
-// - Vista "crear": solo formulario para crear contactos.
-// - Vista "contactos": listado, búsqueda, ordenamiento, edición y eliminación.
-// Solo se modifica App.jsx, los demás archivos quedan igual que en v9.
+// Versión con autenticación básica - Clase 13
 import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import {
   listarContactos,
   crearContacto,
@@ -11,26 +9,23 @@ import {
   eliminarContactoPorId,
 } from "./api.js";
 import { APP_INFO } from "./config";
+import { useAuth } from "./context/AuthContext";
 import FormularioContacto from "./components/FormularioContacto";
 import ContactoCard from "./components/ContactoCard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
 
-export default function App() {
-  // Estado con todos los contactos obtenidos desde la API
+// Dashboard principal de la Agenda ADSO
+function Dashboard() {
+  const { logout } = useAuth();
   const [contactos, setContactos] = useState([]);
-  // Estado de carga mientras se consulta la API
   const [cargando, setCargando] = useState(true);
-  // Estado para mostrar mensajes de error globales
   const [error, setError] = useState("");
-  // Estado del término de búsqueda (solo se usa en la vista "contactos")
   const [busqueda, setBusqueda] = useState("");
-  // Estado del orden de la lista: true = A-Z, false = Z-A
   const [ordenAsc, setOrdenAsc] = useState(true);
-  // Estado del contacto que se está editando (o null si no hay edición)
   const [contactoEnEdicion, setContactoEnEdicion] = useState(null);
-  // NUEVO: estado de la vista actual ("crear" o "contactos")
   const [vista, setVista] = useState("crear");
 
-  // useEffect para cargar la lista de contactos al iniciar la aplicación
   useEffect(() => {
     async function cargarContactos() {
       try {
@@ -48,12 +43,10 @@ export default function App() {
     cargarContactos();
   }, []);
 
-  // Crear contacto (CREATE): llama a la API y agrega el nuevo contacto al estado
   const agregarContacto = async (nuevo) => {
     try {
       setError("");
       const creado = await crearContacto(nuevo);
-      // Agregamos el contacto recién creado al estado local
       setContactos((prev) => [...prev, creado]);
     } catch (error) {
       console.error("Error al crear contacto:", error);
@@ -62,15 +55,11 @@ export default function App() {
     }
   };
 
-  // Actualizar contacto (UPDATE): llama a la API y reemplaza el contacto en el estado
   const actualizarContactoHandler = async (contactoActualizado) => {
     try {
       setError("");
-      // Llamamos a la API para actualizar el contacto por id
       const actualizado = await actualizarContacto(contactoActualizado.id, contactoActualizado);
-      // Reemplazamos en el estado el contacto que coincide por id
       setContactos((prev) => prev.map((c) => (c.id === actualizado.id ? actualizado : c)));
-      // Salimos de modo edición
       setContactoEnEdicion(null);
     } catch (error) {
       console.error("Error al actualizar contacto:", error);
@@ -79,14 +68,11 @@ export default function App() {
     }
   };
 
-  // Eliminar contacto (DELETE): llama a la API y lo quita del estado local
   const eliminarContacto = async (id) => {
     try {
       setError("");
       await eliminarContactoPorId(id);
-      // Eliminamos del estado local el contacto con ese id
       setContactos((prev) => prev.filter((c) => c.id !== id));
-      // Si el contacto estaba en edición, cancelamos la edición
       setContactoEnEdicion((actual) => (actual && actual.id === id ? null : actual));
     } catch (error) {
       console.error("Error al eliminar contacto:", error);
@@ -94,31 +80,26 @@ export default function App() {
     }
   };
 
-  // Activa el modo edición con el contacto seleccionado
   const onEditarClick = (contacto) => {
     setContactoEnEdicion(contacto);
     setError("");
   };
 
-  // Cancela la edición y vuelve al modo normal
   const onCancelarEdicion = () => {
     setContactoEnEdicion(null);
   };
 
-  // Cambia a la vista de ver contactos
   const irAVerContactos = () => {
     setVista("contactos");
-    setContactoEnEdicion(null); // limpiamos cualquier edición previa
+    setContactoEnEdicion(null);
   };
 
-  // Vuelve a la vista de crear contacto
   const irACrearContacto = () => {
     setVista("crear");
     setContactoEnEdicion(null);
-    setBusqueda(""); // limpiamos el término de búsqueda
+    setBusqueda("");
   };
 
-  // Filtramos los contactos según lo que escribió el usuario en el buscador
   const contactosFiltrados = contactos.filter((c) => {
     const termino = busqueda.toLowerCase();
     return (
@@ -129,7 +110,6 @@ export default function App() {
     );
   });
 
-  // Ordenamos los contactos filtrados por nombre A-Z o Z-A
   const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
     const nombreA = a.nombre.toLowerCase();
     const nombreB = b.nombre.toLowerCase();
@@ -138,7 +118,6 @@ export default function App() {
     return 0;
   });
 
-  // Variables auxiliares para saber en qué vista estamos
   const estaEnVistaCrear = vista === "crear";
   const estaEnVistaContactos = vista === "contactos";
 
@@ -149,7 +128,6 @@ export default function App() {
       <header className="border-b border-slate-800 bg-slate-950/60 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* Logo con la letra A */}
             <div className="h-9 w-9 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-lg font-bold shadow-md">
               A
             </div>
@@ -160,29 +138,32 @@ export default function App() {
               </h1>
             </div>
           </div>
-          {/* Info de la ficha a la derecha */}
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-slate-400">SENA CTMA</p>
-            <p className="text-xs text-slate-200">Ficha {APP_INFO.ficha}</p>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-slate-400">SENA CTMA</p>
+              <p className="text-xs text-slate-200">Ficha {APP_INFO.ficha}</p>
+            </div>
+            {/* Botón de cerrar sesión */}
+            <button
+              onClick={logout}
+              className="text-xs px-3 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition"
+            >
+              Cerrar sesión
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Contenido principal en grid de 2 columnas */}
       <main className="max-w-6xl mx-auto px-4 py-8 pb-14">
         <div className="grid gap-8 md:grid-cols-[1.6fr,1fr] items-start">
 
-          {/* COLUMNA IZQUIERDA: tarjeta principal que cambia según la vista */}
           <div className="bg-white/95 rounded-3xl shadow-2xl border border-slate-100 px-6 py-7 md:px-8 md:py-8">
-
-            {/* Encabezado de la tarjeta con botón para cambiar de vista */}
             <header className="mb-5 flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">
                   {APP_INFO.titulo}
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">{APP_INFO.subtitulo}</p>
-                {/* Indicador de conexión con JSON Server */}
                 <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 border border-blue-100">
                   <span className="h-2 w-2 rounded-full bg-green-500" />
                   <span className="text-xs font-medium text-blue-800">
@@ -190,8 +171,6 @@ export default function App() {
                   </span>
                 </div>
               </div>
-
-              {/* Botón que cambia según la vista activa */}
               <div className="flex flex-col items-end gap-2">
                 <span className="text-[11px] uppercase tracking-[0.16em] text-gray-400">
                   {estaEnVistaCrear ? "Modo creación" : "Modo contactos"}
@@ -216,19 +195,16 @@ export default function App() {
               </div>
             </header>
 
-            {/* Mensaje de error global */}
             {error && (
               <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3">
                 <p className="text-sm font-medium text-red-700">{error}</p>
               </div>
             )}
 
-            {/* Mientras carga mostramos un mensaje */}
             {cargando ? (
               <p className="text-sm text-gray-500">Cargando contactos...</p>
             ) : (
               <>
-                {/* VISTA CREAR: solo muestra el formulario para crear contactos */}
                 {estaEnVistaCrear && (
                   <FormularioContacto
                     onAgregar={agregarContacto}
@@ -238,10 +214,8 @@ export default function App() {
                   />
                 )}
 
-                {/* VISTA CONTACTOS: buscador, lista y formulario de edición */}
                 {estaEnVistaContactos && (
                   <>
-                    {/* Formulario de edición: solo aparece cuando hay un contacto en edición */}
                     {contactoEnEdicion && (
                       <div className="mb-4">
                         <FormularioContacto
@@ -253,7 +227,6 @@ export default function App() {
                       </div>
                     )}
 
-                    {/* Buscador y botón de orden */}
                     <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
                       <div className="flex-1">
                         <input
@@ -263,7 +236,6 @@ export default function App() {
                           value={busqueda}
                           onChange={(e) => setBusqueda(e.target.value)}
                         />
-                        {/* Contador de resultados */}
                         <p className="mt-1 text-[11px] text-gray-500">
                           Mostrando {contactosOrdenados.length} de {contactos.length} contacto{contactos.length !== 1 && "s"}
                         </p>
@@ -277,7 +249,6 @@ export default function App() {
                       </button>
                     </div>
 
-                    {/* Lista de contactos filtrados y ordenados */}
                     <section className="space-y-3">
                       {contactosOrdenados.length === 0 ? (
                         <p className="text-sm text-gray-500">
@@ -300,10 +271,7 @@ export default function App() {
             )}
           </div>
 
-          {/* COLUMNA DERECHA: Panel lateral con estadísticas y tips */}
           <aside className="space-y-4 md:space-y-5">
-
-            {/* Banner principal con contador de contactos */}
             <div className="rounded-3xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white p-6 shadow-xl flex flex-col justify-between min-h-[220px]">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-blue-100/80">Proyecto ABP</p>
@@ -313,7 +281,6 @@ export default function App() {
                 </p>
               </div>
               <div className="mt-6 space-y-2 text-sm">
-                {/* Contador de contactos registrados */}
                 <p className="flex items-center justify-between">
                   <span className="text-blue-100">Contactos registrados</span>
                   <span className="font-semibold text-white text-base">{contactos.length}</span>
@@ -324,7 +291,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Tarjeta de tips de código limpio */}
             <div className="rounded-2xl bg-white/90 border border-slate-100 p-4 shadow-sm">
               <h3 className="text-sm font-semibold text-gray-900">Tips de código limpio</h3>
               <ul className="mt-2 text-xs text-gray-600 space-y-1">
@@ -335,7 +301,6 @@ export default function App() {
               </ul>
             </div>
 
-            {/* Tarjeta motivacional SENA */}
             <div className="rounded-2xl bg-slate-900 border border-slate-700 p-4 text-slate-100 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.3em] text-slate-400">SENA CTMA · ADSO</p>
               <p className="text-sm font-semibold mt-2">Desarrollo Web – ReactJS</p>
@@ -343,10 +308,22 @@ export default function App() {
                 "Pequeños proyectos bien cuidados valen más que mil ideas sin código. Agenda ADSO es tu carta de presentación como desarrolladora."
               </p>
             </div>
-
           </aside>
         </div>
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+    </Routes>
   );
 }
