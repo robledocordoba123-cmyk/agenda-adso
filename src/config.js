@@ -3,7 +3,7 @@
 // Si algo cambia (puerto, título, ficha), solo se toca este archivo.
 
 // URL de la API local. Si cambia el puerto, solo se modifica aquí.
-export const API_BASE_URL = "http://localhost:3001/contactos";
+export const API_BASE_URL = "https://agenda-adso-api-kbcz.onrender.com/contactos";
 
 // Información general de la app que se usa en el encabezado
 export const APP_INFO = {
